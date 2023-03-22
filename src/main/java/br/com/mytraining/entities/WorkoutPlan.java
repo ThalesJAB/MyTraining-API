@@ -1,15 +1,36 @@
 package br.com.mytraining.entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+
+@Entity
 public class WorkoutPlan {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String title;
 	private String description;
 	private LocalDateTime startDate;
 	private LocalDateTime finishDate;
-
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name="workout_plan_id")
+	private List<Workout> workoutsList = new ArrayList<>();
+	
+	@ManyToOne
+	@JoinColumn(name = "person_id")
 	private Person person;
 
 	public WorkoutPlan() {
@@ -17,12 +38,13 @@ public class WorkoutPlan {
 	}
 
 	public WorkoutPlan(Long id, String title, String description, LocalDateTime startDate, LocalDateTime finishDate,
-			Person person) {
+			List<Workout> workoutsList, Person person) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.startDate = startDate;
 		this.finishDate = finishDate;
+		this.workoutsList = workoutsList;
 		this.person = person;
 	}
 
@@ -64,6 +86,14 @@ public class WorkoutPlan {
 
 	public void setFinishDate(LocalDateTime finishDate) {
 		this.finishDate = finishDate;
+	}
+
+	public List<Workout> getWorkoutsList() {
+		return workoutsList;
+	}
+
+	public void setWorkoutsList(List<Workout> workoutsList) {
+		this.workoutsList = workoutsList;
 	}
 
 	public Person getPerson() {

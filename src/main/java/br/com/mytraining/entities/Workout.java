@@ -5,13 +5,26 @@ import java.util.List;
 import java.util.Objects;
 
 import br.com.mytraining.entities.enums.TrainingType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 
+@Entity
 public class Workout {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
 	private String description;
 	private Integer trainingType;
+	
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "workout_id")
 	private List<Exercise> exerciseList = new ArrayList<>();
 
 	public Workout() {
