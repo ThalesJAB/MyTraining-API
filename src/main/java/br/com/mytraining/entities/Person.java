@@ -1,5 +1,6 @@
 package br.com.mytraining.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,15 +13,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class Person {
+public class Person implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
+	private Integer age;
 	private Double weight;
 	private Double height;
-	
+
 	@OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
 	private List<WorkoutPlan> workoutPlans = new ArrayList<>();
 
@@ -28,9 +32,11 @@ public class Person {
 
 	}
 
-	public Person(Long id, String name, Double weight, Double height, List<WorkoutPlan> workoutPlans) {
+	public Person(Long id, String name, Integer age, Double weight, Double height, List<WorkoutPlan> workoutPlans) {
+		super();
 		this.id = id;
 		this.name = name;
+		this.age = age;
 		this.weight = weight;
 		this.height = height;
 		this.workoutPlans = workoutPlans;
@@ -50,6 +56,14 @@ public class Person {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
 	}
 
 	public Double getWeight() {

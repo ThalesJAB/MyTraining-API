@@ -1,5 +1,6 @@
 package br.com.mytraining.entities;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
@@ -8,7 +9,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Exercise {
+public class Exercise implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,19 +20,19 @@ public class Exercise {
 	private String description;
 	private Integer reps;
 	private Integer sets;
-	private String rets;
+	private String rest;
 
 	public Exercise() {
 
 	}
 
-	public Exercise(Long id, String name, String description, Integer reps, Integer sets, String rets) {
+	public Exercise(Long id, String name, String description, Integer reps, Integer sets, String rest) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.reps = reps;
 		this.sets = sets;
-		this.rets = rets;
+		this.rest = rest;
 	}
 
 	public Long getId() {
@@ -72,12 +75,12 @@ public class Exercise {
 		this.sets = sets;
 	}
 
-	public String getRets() {
-		return rets;
+	public String getRest() {
+		return rest;
 	}
 
-	public void setRets(String rets) {
-		this.rets = rets;
+	public void setRest(String rest) {
+		this.rest = rest;
 	}
 
 	@Override
