@@ -1,10 +1,12 @@
 package br.com.mytraining.entities;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import br.com.mytraining.dtos.PersonDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,15 +17,19 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class WorkoutPlan {
+public class WorkoutPlan implements Serializable {
+	
+	
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String title;
 	private String description;
-	private LocalDateTime startDate;
-	private LocalDateTime finishDate;
+	private LocalDate startDate;
+	private LocalDate finishDate;
+	
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name="workout_plan_id")
@@ -37,7 +43,7 @@ public class WorkoutPlan {
 
 	}
 
-	public WorkoutPlan(Long id, String title, String description, LocalDateTime startDate, LocalDateTime finishDate,
+	public WorkoutPlan(Long id, String title, String description, LocalDate startDate, LocalDate finishDate,
 			List<Workout> workoutsList, Person person) {
 		this.id = id;
 		this.title = title;
@@ -72,19 +78,19 @@ public class WorkoutPlan {
 		this.description = description;
 	}
 
-	public LocalDateTime getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(LocalDateTime startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 
-	public LocalDateTime getFinishDate() {
+	public LocalDate getFinishDate() {
 		return finishDate;
 	}
 
-	public void setFinishDate(LocalDateTime finishDate) {
+	public void setFinishDate(LocalDate finishDate) {
 		this.finishDate = finishDate;
 	}
 
@@ -96,8 +102,8 @@ public class WorkoutPlan {
 		this.workoutsList = workoutsList;
 	}
 
-	public Person getPerson() {
-		return person;
+	public PersonDTO getPerson() {
+		return new PersonDTO(person);
 	}
 
 	public void setPerson(Person person) {
