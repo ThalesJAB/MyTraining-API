@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -46,6 +47,15 @@ public class ResourceExceptionHandler {
 			error.addErros(x.getField(), x.getDefaultMessage());
 		}
 
+		return ResponseEntity.status(status).body(error);
+	}
+
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<StandardError> handleHttpMessageNotReadable(HttpMessageNotReadableException e,
+			HttpServletRequest request) {
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		StandardError error = new StandardError(Instant.now(), status.value(), "Bad Request", e.getMessage(),
+				request.getRequestURI());
 		return ResponseEntity.status(status).body(error);
 	}
 }
