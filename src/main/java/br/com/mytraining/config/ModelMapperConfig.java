@@ -16,6 +16,7 @@ public class ModelMapperConfig {
 
 		ModelMapper modelMapper = new ModelMapper();;
 
+
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
 		modelMapper.createTypeMap(ProfileType.class, Integer.class)
@@ -23,7 +24,7 @@ public class ModelMapperConfig {
 					ProfileType profileType = context.getSource();
 					return profileType.getCode();
 				});
-		
+
 		return modelMapper;
 		
 	}

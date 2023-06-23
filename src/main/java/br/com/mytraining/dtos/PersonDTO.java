@@ -104,8 +104,13 @@ public class PersonDTO implements Serializable {
 	}
 
 
-	public Set<Integer> getProfiles() {
-		return profiles;
+	public Set<ProfileType> getProfiles() {
+		return profiles.stream().map(ProfileType::valueOf).collect(Collectors.toSet());
+	}
+
+	public void addProfile(ProfileType profileType){
+		this.profiles.add(profileType.getCode());
+
 	}
 
 	public void setProfiles(Set<Integer> profiles) {
