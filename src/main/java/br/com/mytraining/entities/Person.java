@@ -1,11 +1,13 @@
 package br.com.mytraining.entities;
 
+import br.com.mytraining.entities.enums.ProfileType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Person implements Serializable {
@@ -16,9 +18,23 @@ public class Person implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+
+    @Column(unique = true)
+    private String email;
+
+    private String password;
     private Integer age;
     private Double weight;
     private Double height;
+
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "PROFILES")
+    private Set<Integer> profiles = new HashSet<>();
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate creationDate = LocalDate.now();
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
     private List<WorkoutPlan> workoutPlans = new ArrayList<>();
@@ -27,13 +43,15 @@ public class Person implements Serializable {
 
     }
 
-    public Person(Long id, String name, Integer age, Double weight, Double height, List<WorkoutPlan> workoutPlans) {
-        super();
+    public Person(Long id, String name, String email, String password, Integer age, Double weight, Double height, Set<ProfileType> profiles, List<WorkoutPlan> workoutPlans) {
         this.id = id;
         this.name = name;
+        this.email = email;
+        this.password = password;
         this.age = age;
         this.weight = weight;
         this.height = height;
+        setProfiles(profiles);
         this.workoutPlans = workoutPlans;
     }
 
@@ -51,6 +69,22 @@ public class Person implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Integer getAge() {
@@ -75,6 +109,20 @@ public class Person implements Serializable {
 
     public void setHeight(Double height) {
         this.height = height;
+    }
+
+    public Set<ProfileType> getProfiles() {
+        return profiles.stream().map(p -> ProfileType.valueOf(p)).collect(Collectors.toSet());
+    }
+    public void addProfile(ProfileType profile) {
+        this.profiles.add(profile.getCode());
+    }
+    public void setProfiles(Set<ProfileType> profiles) {
+        this.profiles = profiles.stream().map(p -> p.getCode()).collect(Collectors.toSet());
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
     public List<WorkoutPlan> getWorkoutPlans() {
