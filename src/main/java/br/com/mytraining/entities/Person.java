@@ -3,6 +3,9 @@ package br.com.mytraining.entities;
 import br.com.mytraining.entities.enums.ProfileType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -17,13 +20,21 @@ public class Person implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank
+    @Length(min = 3, max = 100, message = "O campo NOME deve ter entre 3 e 100 caracteres")
     private String name;
 
-
+    @NotBlank
+    @Length(min = 3, max = 100, message = "O campo E-MAIL deve ter entre 3 e 100 caracteres")
     @Column(unique = true)
     private String email;
 
+    @NotBlank
+    @Length(min = 3, max = 100, message = "O campo SENHA deve ter entre 3 e 100 caracteres")
     private String password;
+
+    @Max(130)
     private Integer age;
     private Double weight;
     private Double height;
@@ -37,13 +48,13 @@ public class Person implements Serializable {
     private LocalDate creationDate = LocalDate.now();
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
-    private List<WorkoutPlan> workoutPlans = new ArrayList<>();
+    private Set<WorkoutPlan> workoutPlans = new TreeSet<>();
 
     public Person() {
 
     }
 
-    public Person(Long id, String name, String email, String password, Integer age, Double weight, Double height, Set<ProfileType> profiles, List<WorkoutPlan> workoutPlans) {
+    public Person(Long id, String name, String email, String password, Integer age, Double weight, Double height, Set<ProfileType> profiles, Set<WorkoutPlan> workoutPlans) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -125,7 +136,7 @@ public class Person implements Serializable {
         return creationDate;
     }
 
-    public List<WorkoutPlan> getWorkoutPlans() {
+    public Set<WorkoutPlan> getWorkoutPlans() {
         return workoutPlans;
     }
 
@@ -133,7 +144,7 @@ public class Person implements Serializable {
         this.workoutPlans.add(plan);
     }
 
-    public void setWorkoutPlans(List<WorkoutPlan> workoutPlans) {
+    public void setWorkoutPlans(Set<WorkoutPlan> workoutPlans) {
         this.workoutPlans = workoutPlans;
     }
 

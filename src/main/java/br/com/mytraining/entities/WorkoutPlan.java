@@ -1,40 +1,36 @@
 package br.com.mytraining.entities;
 
+import br.com.mytraining.dtos.PersonDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import br.com.mytraining.dtos.PersonDTO;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-
 @Entity
-public class WorkoutPlan implements Serializable {
-	
-	
+public class WorkoutPlan implements Serializable, Comparable<WorkoutPlan> {
+
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String title;
 	private String description;
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate startDate;
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate finishDate;
-	
-	
+
+
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name="workout_plan_id")
 	private List<Workout> workoutsList = new ArrayList<>();
-	
+
 	@ManyToOne
 	@JoinColumn(name = "person_id")
 	private Person person;
@@ -44,7 +40,7 @@ public class WorkoutPlan implements Serializable {
 	}
 
 	public WorkoutPlan(Long id, String title, String description, LocalDate startDate, LocalDate finishDate,
-			List<Workout> workoutsList, Person person) {
+					   List<Workout> workoutsList, Person person) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
@@ -126,7 +122,10 @@ public class WorkoutPlan implements Serializable {
 		WorkoutPlan other = (WorkoutPlan) obj;
 		return Objects.equals(id, other.id);
 	}
-	
-	
 
+
+	@Override
+	public int compareTo(WorkoutPlan wp) {
+		return Long.compare(this.id, wp.getId());
+	}
 }
