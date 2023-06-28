@@ -2,6 +2,7 @@ package br.com.mytraining.resources;
 
 import br.com.mytraining.entities.WorkoutPlan;
 import br.com.mytraining.services.WorkoutPlanService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value = "/persons/{idPerson}/workoutplans")
 public class WorkoutPlanResource {
@@ -36,17 +38,17 @@ public class WorkoutPlanResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<WorkoutPlan> create(@PathVariable Long idPerson, @RequestBody WorkoutPlan obj) {
+	public ResponseEntity<WorkoutPlan> create(@PathVariable Long idPerson, @Valid @RequestBody WorkoutPlan obj) {
 
 		obj = service.create(idPerson, obj);
 
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/persons/{idPerson}/workoutplans/{id}").buildAndExpand(idPerson, obj.getId()).toUri();;
 
 		return ResponseEntity.created(uri).body(obj);
 	}
 
 	@PutMapping(value = "/{idWorkoutPlan}")
-	public ResponseEntity<WorkoutPlan> update(@PathVariable Long idPerson, @PathVariable Long idWorkoutPlan, @RequestBody WorkoutPlan obj) {
+	public ResponseEntity<WorkoutPlan> update(@PathVariable Long idPerson, @PathVariable Long idWorkoutPlan, @Valid @RequestBody WorkoutPlan obj) {
 
 		obj = service.update(idPerson, idWorkoutPlan, obj);
 
