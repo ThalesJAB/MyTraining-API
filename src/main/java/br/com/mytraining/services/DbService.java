@@ -8,6 +8,7 @@ import br.com.mytraining.entities.enums.ProfileType;
 import br.com.mytraining.entities.enums.TrainingType;
 import br.com.mytraining.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,13 +22,16 @@ public class DbService {
     @Autowired
     private PersonRepository personRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
 
     public void initBd() {
 
-        Person person1 = new Person(null, "Thales", "thalesjoseaguiar@gmail.com", "12345", 22, 90.1, 1.77, Set.of(ProfileType.PERSON, ProfileType.ADMIN), null);
-        Person person2 = new Person(null, "Maria", "maria@gmail.com", "12345", 25, 60.2, 1.60, Set.of(ProfileType.PERSON), null);
-        Person person3 = new Person(null, "Pedro", "pedro@hotmail.com", "12345", 40, 90.0, 1.80, Set.of(ProfileType.PERSONAL_TRAINER),null);
-        Person person4 = new Person(null, "João", "joao@gmail.com", "12345", 30, 80.5, 1.75, Set.of(ProfileType.PERSON), null);
+        Person person1 = new Person(null, "Thales", "thalesjoseaguiar@gmail.com", encoder.encode("12345"), 22, 90.1, 1.77, Set.of(ProfileType.PERSON, ProfileType.ADMIN), null);
+        Person person2 = new Person(null, "Maria", "maria@gmail.com", encoder.encode("12345"), 25, 60.2, 1.60, Set.of(ProfileType.PERSON), null);
+        Person person3 = new Person(null, "Pedro", "pedro@hotmail.com", encoder.encode("12345"), 40, 90.0, 1.80, Set.of(ProfileType.PERSONAL_TRAINER),null);
+        Person person4 = new Person(null, "João", "joao@gmail.com", encoder.encode("12345"), 30, 80.5, 1.75, Set.of(ProfileType.PERSON), null);
 
         // Creating exercises
 
@@ -82,9 +86,10 @@ public class DbService {
 
         // Criando um plano de treino
 
-        WorkoutPlan workoutPlan1 = new WorkoutPlan(null, "Treino Thales Abril", "Voltado para ganho de força e hipertrofia", LocalDate.now(), LocalDate.of(2023, 4, 3), Arrays.asList(workout1, workout2, workout3, workout4), person1);
+        WorkoutPlan workoutPlan1 = new WorkoutPlan(null, "Treino Thales Abril", "Voltado para ganho de força e hipertrofia", LocalDate.now(), LocalDate.of(2023, 9, 3), Arrays.asList(workout1, workout2, workout3, workout4), person1);
 
-        person1.setWorkoutPlans(Arrays.asList(workoutPlan1));
+
+        person1.setWorkoutPlans(Set.of(workoutPlan1));
 
         personRepository.saveAll(Arrays.asList(person1, person2, person3, person4));
 
