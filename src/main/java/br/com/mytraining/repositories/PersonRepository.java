@@ -1,12 +1,10 @@
 package br.com.mytraining.repositories;
 
-import br.com.mytraining.entities.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import br.com.mytraining.entities.Person;
 
 public interface PersonRepository extends JpaRepository<Person, Long>{
-
-    Optional<Person> findByEmail(String email);
+    Person findByEmail(String email);
 
 }

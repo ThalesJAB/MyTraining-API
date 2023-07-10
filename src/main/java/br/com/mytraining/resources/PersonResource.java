@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -20,52 +21,57 @@ import java.util.stream.Collectors;
 public class PersonResource {
 
 
-	@Autowired
-	private ModelMapper mapper;
+    @Autowired
+    private ModelMapper mapper;
 
-	@Autowired
-	private PersonService service;
+    @Autowired
+    private PersonService service;
 
-	@GetMapping
-	public ResponseEntity<List<PersonDTO>> findAll() {
-		
-		return ResponseEntity.ok().body(service.findAll().stream().map(person -> mapper.map(person, PersonDTO.class)).collect(Collectors.toList()));
+    @GetMapping
+    public ResponseEntity<List<PersonDTO>> findAll() {
 
-	}
+        return ResponseEntity.ok().body(service.findAll().stream().map(person -> mapper.map(person, PersonDTO.class)).collect(Collectors.toList()));
 
-	@GetMapping(value = "/{id}")
-	public ResponseEntity<Person> findById(@PathVariable Long id) {
+    }
 
-		Person obj = service.findById(id);
+    @PreAuthorize("hasAnyRole('ADMIN') or #id == authentication.principal.id")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Person> findById(@PathVariable Long id) {
 
-		return ResponseEntity.ok().body(obj);
-	}
+        Person obj = service.findById(id);
 
-	@PostMapping
-	public ResponseEntity<Person> create(@Valid  @RequestBody Person obj){
-		obj = service.create(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-		return ResponseEntity.created(uri).body(obj);
-		
-				
-	}
-	
-	@PutMapping(value="/{id}")
-	public ResponseEntity<Person> update(@PathVariable Long id, @Valid @RequestBody Person obj){
-		
-		obj = service.update(id, obj);
-		
-		
-		return ResponseEntity.ok().body(obj);
-		
-	}
-	
-	@DeleteMapping(value="/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Long id){
-		
-		service.delete(id);
-		
-		return ResponseEntity.noContent().build();
-	}
+        return ResponseEntity.ok().body(obj);
+    }
+
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PostMapping
+    public ResponseEntity<Person> create(@Valid @RequestBody PersonDTO obj) {
+        Person newPerson = service.create(obj);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newPerson.getId()).toUri();
+        return ResponseEntity.created(uri).body(newPerson);
+
+
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN') or #id == authentication.principal.id")
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Person> update(@PathVariable Long id, @Valid @RequestBody Person obj) {
+
+        obj = service.update(id, obj);
+
+
+        return ResponseEntity.ok().body(obj);
+
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+
+        service.delete(id);
+
+        return ResponseEntity.noContent().build();
+    }
 
 }

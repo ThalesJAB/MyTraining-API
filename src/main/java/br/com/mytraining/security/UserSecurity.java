@@ -9,19 +9,23 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class UserSS implements UserDetails {
+public class UserSecurity implements UserDetails {
 
-    private Long id;
+  
+	private static final long serialVersionUID = 1L;
+	private Long id;
     private String email;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
 
-    public UserSS(Long id, String email, String password, Set<ProfileType> profiles) {
+    public UserSecurity(Long id, String email, String password, Set<ProfileType> profileTypes) {
+        super();
         this.id = id;
         this.email = email;
         this.password = password;
-        this.authorities = profiles.stream().map(x -> new SimpleGrantedAuthority((x.getDescription()))).collect(Collectors.toSet());
+        this.authorities = profileTypes.stream().map(m -> new SimpleGrantedAuthority(m.getDescription()))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -39,7 +43,7 @@ public class UserSS implements UserDetails {
         return email;
     }
 
-    public Long getId(){
+    public Long getId() {
         return id;
     }
 

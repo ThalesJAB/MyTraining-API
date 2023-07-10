@@ -5,6 +5,7 @@ import br.com.mytraining.services.WorkoutPlanService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -13,11 +14,13 @@ import java.util.List;
 
 @CrossOrigin("*")
 @RestController
+@PreAuthorize("hasAnyRole('ADMIN') or #idPerson == authentication.principal.id")
 @RequestMapping(value = "/persons/{idPerson}/workoutplans")
 public class WorkoutPlanResource {
 
 	@Autowired
 	private WorkoutPlanService service;
+
 
 	@GetMapping
 	public ResponseEntity<List<WorkoutPlan>> findAllWorkoutPlanByIdPerson(@PathVariable Long idPerson) {
@@ -54,7 +57,7 @@ public class WorkoutPlanResource {
 
 		return ResponseEntity.ok().body(obj);
 	}
-	
+
 	@DeleteMapping(value="/{idWorkoutPlan}")
 	public ResponseEntity<Void> delete(@PathVariable Long idPerson, @PathVariable Long idWorkoutPlan){
 		

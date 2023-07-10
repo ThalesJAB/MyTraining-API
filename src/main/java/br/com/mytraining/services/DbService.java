@@ -88,8 +88,12 @@ public class DbService {
 
         WorkoutPlan workoutPlan1 = new WorkoutPlan(null, "Treino Thales Abril", "Voltado para ganho de força e hipertrofia", LocalDate.now(), LocalDate.of(2023, 9, 3), Arrays.asList(workout1, workout2, workout3, workout4), person1);
 
+        WorkoutPlan workoutPlan2 = new WorkoutPlan(null, "Treino Maria Abril", "Voltado para ganho de força e hipertrofia", LocalDate.now(), LocalDate.of(2023, 9, 3), Arrays.asList(workout1, workout2, workout3, workout4), person2);
+
 
         person1.setWorkoutPlans(Set.of(workoutPlan1));
+
+        person2.setWorkoutPlans(Set.of(workoutPlan2));
 
         personRepository.saveAll(Arrays.asList(person1, person2, person3, person4));
 

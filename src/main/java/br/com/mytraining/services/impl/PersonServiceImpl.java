@@ -1,5 +1,6 @@
 package br.com.mytraining.services.impl;
 
+import br.com.mytraining.dtos.PersonDTO;
 import br.com.mytraining.entities.Person;
 import br.com.mytraining.repositories.PersonRepository;
 import br.com.mytraining.services.PersonService;
@@ -18,7 +19,8 @@ public class PersonServiceImpl implements PersonService {
 	@Autowired
 	private PersonRepository repository;
 
-	private BCryptPasswordEncoder encoder;
+/*	@Autowired
+	private BCryptPasswordEncoder encoder;*/
 
 	@Override
 	public List<Person> findAll() {
@@ -35,12 +37,23 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	@Override
-	public Person create(Person obj) {
-		validateEmail(obj);
+	public Person create(PersonDTO obj) {
 
-		obj.setPassword(encoder.encode(obj.getPassword()));
+		validateEmail(obj.getId(), obj.getEmail());
 
-		return repository.save(obj);
+		String encryptedPassword = new BCryptPasswordEncoder().encode(obj.getPassword());
+
+		Person newPerson = new Person();
+		newPerson.setName(obj.getName());
+		newPerson.setAge(obj.getAge());
+		newPerson.setPassword(encryptedPassword);
+		newPerson.setHeight(obj.getHeight());
+		newPerson.setWeight(obj.getWeight());
+		newPerson.setEmail(obj.getEmail());
+		newPerson.setProfiles(obj.getProfiles());
+		newPerson.setPassword(encryptedPassword);
+
+		return repository.save(newPerson);
 	}
 
 
@@ -49,12 +62,11 @@ public class PersonServiceImpl implements PersonService {
 
 		Person entity = findById(id);
 
-		validateEmail(obj);
+		validateEmail(id, obj.getEmail());
 		entity.setEmail(obj.getEmail());
 		if(!obj.getPassword().equals(entity.getPassword())) {
-			entity.setPassword(encoder.encode(obj.getPassword()));
+			entity.setPassword(new BCryptPasswordEncoder().encode(obj.getPassword()));
 		}
-		entity.setPassword(obj.getPassword());
 		entity.setAge(obj.getAge());
 		entity.setHeight(obj.getHeight());
 		entity.setName(obj.getName());
@@ -68,18 +80,24 @@ public class PersonServiceImpl implements PersonService {
 
 	@Override
 	public void delete(Long id) {
+		findById(id);
 		repository.deleteById(id);
 
 	}
 
 
-	private void validateEmail(Person obj) {
-		Optional<Person> personDB = repository.findByEmail(obj.getEmail());
+	private void validateEmail(Long id, String email) {
+		Person personDB = repository.findByEmail(email);
 
-		if(personDB.isPresent() && !personDB.get().getId().equals(obj.getId())){
-			throw new DataIntegrityViolationException("E-mail já cadastrado!");
+		if(personDB != null) {
+
+			if (personDB.getEmail().equals(email) && !personDB.getId().equals(id)) {
+				throw new DataIntegrityViolationException("E-mail já cadastrado!");
+			}
 		}
 
 	}
+
+
 
 }

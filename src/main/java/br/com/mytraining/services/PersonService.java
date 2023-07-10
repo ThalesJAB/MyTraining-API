@@ -1,5 +1,6 @@
 package br.com.mytraining.services;
 
+import br.com.mytraining.dtos.PersonDTO;
 import br.com.mytraining.entities.Person;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface PersonService {
 
 	Person findById(Long id);
 
-	Person create(Person obj);
+	Person create(PersonDTO obj);
 
 	Person update(Long id, Person obj);
 

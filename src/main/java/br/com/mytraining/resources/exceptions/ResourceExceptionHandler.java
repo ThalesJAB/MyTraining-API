@@ -1,18 +1,19 @@
 package br.com.mytraining.resources.exceptions;
 
-import java.time.Instant;
-
+import br.com.mytraining.services.exceptions.DataIntegrityViolationException;
+import br.com.mytraining.services.exceptions.ObjectNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 
-import br.com.mytraining.services.exceptions.DataIntegrityViolationException;
-import br.com.mytraining.services.exceptions.ObjectNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
+import java.time.Instant;
 
 @ControllerAdvice
 public class ResourceExceptionHandler {
@@ -58,4 +59,14 @@ public class ResourceExceptionHandler {
 				request.getRequestURI());
 		return ResponseEntity.status(status).body(error);
 	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<StandardError> handleAccessDeniedException(
+			Exception ex, WebRequest request) {
+		HttpStatus status = HttpStatus.FORBIDDEN;
+		StandardError error = new StandardError(Instant.now(), status.value(), "Access denied", ex.getMessage(), request.getContextPath());
+
+		return ResponseEntity.status(status).body(error);
+	}
+
 }
